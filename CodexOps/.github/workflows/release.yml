@@ -81,13 +81,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$HOME/.tauri"
-          echo "$TAURI_SIGNING_PRIVATE_KEY_B64" | base64 --decode > "$HOME/.tauri/codexmonitor.key"
+          echo "$TAURI_SIGNING_PRIVATE_KEY_B64" | base64 --decode > "$HOME/.tauri/codexops.key"
 
       - name: Build app bundle
         run: |
           set -euo pipefail
           export TAURI_SIGNING_PRIVATE_KEY
-          TAURI_SIGNING_PRIVATE_KEY="$(cat "$HOME/.tauri/codexmonitor.key")"
+          TAURI_SIGNING_PRIVATE_KEY="$(cat "$HOME/.tauri/codexops.key")"
           npm run tauri -- build --bundles app
 
       - name: Bundle OpenSSL and re-sign
@@ -100,7 +100,7 @@ jobs:
         run: |
           set -euo pipefail
           ditto -c -k --keepParent \
-            "src-tauri/target/release/bundle/macos/Codex Monitor.app" \
+            "src-tauri/target/release/bundle/macos/CodexOps.app" \
             CodexOps.zip
 
           xcrun notarytool submit CodexOps.zip \
@@ -108,7 +108,7 @@ jobs:
             --wait
 
           xcrun stapler staple \
-            "src-tauri/target/release/bundle/macos/Codex Monitor.app"
+            "src-tauri/target/release/bundle/macos/CodexOps.app"
 
       - name: Package artifacts
         run: |
@@ -123,31 +123,31 @@ jobs:
           )
 
           mkdir -p release-artifacts release-artifacts/dmg-root
-          rm -rf "release-artifacts/dmg-root/Codex Monitor.app"
-          ditto "src-tauri/target/release/bundle/macos/Codex Monitor.app" \
-            "release-artifacts/dmg-root/Codex Monitor.app"
+          rm -rf "release-artifacts/dmg-root/CodexOps.app"
+          ditto "src-tauri/target/release/bundle/macos/CodexOps.app" \
+            "release-artifacts/dmg-root/CodexOps.app"
 
           ditto -c -k --keepParent \
-            "src-tauri/target/release/bundle/macos/Codex Monitor.app" \
+            "src-tauri/target/release/bundle/macos/CodexOps.app" \
             release-artifacts/CodexOps.zip
 
-          hdiutil create -volname "Codex Monitor" \
+          hdiutil create -volname "CodexOps" \
             -srcfolder release-artifacts/dmg-root \
             -ov -format UDZO \
             release-artifacts/CodexOps_${VERSION}_aarch64.dmg
 
           COPYFILE_DISABLE=1 tar -czf \
-            "src-tauri/target/release/bundle/macos/Codex Monitor.app.tar.gz" \
-            -C src-tauri/target/release/bundle/macos "Codex Monitor.app"
+            "src-tauri/target/release/bundle/macos/CodexOps.app.tar.gz" \
+            -C src-tauri/target/release/bundle/macos "CodexOps.app"
 
           npm run tauri signer sign -- \
-            -f "$HOME/.tauri/codexmonitor.key" \
+            -f "$HOME/.tauri/codexops.key" \
             -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" \
-            "src-tauri/target/release/bundle/macos/Codex Monitor.app.tar.gz"
+            "src-tauri/target/release/bundle/macos/CodexOps.app.tar.gz"
 
-          cp "src-tauri/target/release/bundle/macos/Codex Monitor.app.tar.gz" \
+          cp "src-tauri/target/release/bundle/macos/CodexOps.app.tar.gz" \
             release-artifacts/CodexOps.app.tar.gz
-          cp "src-tauri/target/release/bundle/macos/Codex Monitor.app.tar.gz.sig" \
+          cp "src-tauri/target/release/bundle/macos/CodexOps.app.tar.gz.sig" \
             release-artifacts/CodexOps.app.tar.gz.sig
 
       - name: Upload macOS artifacts
@@ -204,13 +204,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$HOME/.tauri"
-          echo "$TAURI_SIGNING_PRIVATE_KEY_B64" | base64 --decode > "$HOME/.tauri/codexmonitor.key"
+          echo "$TAURI_SIGNING_PRIVATE_KEY_B64" | base64 --decode > "$HOME/.tauri/codexops.key"
 
       - name: build AppImage and RPM
         run: |
           set -euo pipefail
           export TAURI_SIGNING_PRIVATE_KEY
-          TAURI_SIGNING_PRIVATE_KEY="$(cat "$HOME/.tauri/codexmonitor.key")"
+          TAURI_SIGNING_PRIVATE_KEY="$(cat "$HOME/.tauri/codexops.key")"
           npm run tauri -- build --bundles appimage,rpm
 
       - name: Validate Linux bundle outputs
@@ -282,7 +282,7 @@ jobs:
           home = Path.home()
           target = home / ".tauri"
           target.mkdir(parents=True, exist_ok=True)
-          (target / "codexmonitor.key").write_bytes(raw)
+          (target / "codexops.key").write_bytes(raw)
           PY
 
       - name: build windows bundles
@@ -290,7 +290,7 @@ jobs:
         run: |
           set -euo pipefail
           export TAURI_SIGNING_PRIVATE_KEY
-          TAURI_SIGNING_PRIVATE_KEY="$(cat "$HOME/.tauri/codexmonitor.key")"
+          TAURI_SIGNING_PRIVATE_KEY="$(cat "$HOME/.tauri/codexops.key")"
           npm run tauri:build:win
 
       - name: Upload Windows artifacts
@@ -477,7 +477,7 @@ jobs:
           preferred_installers = []
           for candidate in exe_candidates:
             lowered = candidate.name.lower()
-            if "codexmonitor" in lowered and ("setup" in lowered or "installer" in lowered):
+            if "codexops" in lowered and ("setup" in lowered or "installer" in lowered):
               preferred_installers.append(candidate)
           if preferred_installers:
             windows_installer = preferred_installers[0]

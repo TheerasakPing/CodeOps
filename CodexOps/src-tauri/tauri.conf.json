@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Codex Monitor",
+  "productName": "CodexOps",
   "version": "0.1.0",
-  "identifier": "com.dimillian.codexmonitor",
+  "identifier": "com.dimillian.codexops",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Codex Monitor",
+        "title": "CodexOps",
         "width": 1200,
         "height": 700,
         "minWidth": 360,

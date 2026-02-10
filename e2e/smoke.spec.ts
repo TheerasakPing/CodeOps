@@ -1,10 +1,13 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
+import { mockTauri } from "./tauri-mock";
 
-// Simple smoke test to ensure the app loads
-test('smoke test - app loads', async ({ page }) => {
-  await page.goto('/');
-  // Check for the main title or a known element
-  await expect(page).toHaveTitle(/CodexOps/);
-  // Or check for a root element
-  await expect(page.locator('#root')).toBeVisible();
+test.beforeEach(async ({ page }) => {
+  await mockTauri(page);
+});
+
+test("has title", async ({ page }) => {
+  await page.goto("/");
+
+  // Expect a title "to contain" a substring.
+  await expect(page).toHaveTitle(/Tauri \+ React \+ Typescript/);
 });

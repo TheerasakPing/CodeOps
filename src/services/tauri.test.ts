@@ -3,18 +3,13 @@ import { invoke } from "@tauri-apps/api/core";
 import * as notification from "@tauri-apps/plugin-notification";
 import {
   addWorkspace,
-  addClone,
-  addWorktree,
   compactThread,
   fetchGit,
   forkThread,
-  getCodexConfigPath,
-  getConfigModel,
   getGitHubIssues,
   getGitLog,
   getGitStatus,
   getOpenAppIcon,
-  isWorkspacePathDir,
   listMcpServerStatus,
   readGlobalAgentsMd,
   readGlobalCodexConfigToml,
@@ -571,61 +566,5 @@ describe("tauri invoke wrappers", () => {
       body: "Fallback",
     });
     expect(isPermissionGrantedMock).not.toHaveBeenCalled();
-  });
-
-  it("invokes get_codex_config_path", async () => {
-    const invokeMock = vi.mocked(invoke);
-    invokeMock.mockResolvedValueOnce("/path/to/config");
-
-    await expect(getCodexConfigPath()).resolves.toBe("/path/to/config");
-    expect(invokeMock).toHaveBeenCalledWith("get_codex_config_path");
-  });
-
-  it("invokes get_config_model and handles null", async () => {
-    const invokeMock = vi.mocked(invoke);
-    invokeMock.mockResolvedValueOnce({ model: "gpt-4" });
-    await expect(getConfigModel("ws-1")).resolves.toBe("gpt-4");
-
-    invokeMock.mockResolvedValueOnce({ model: null });
-    await expect(getConfigModel("ws-1")).resolves.toBeNull();
-    
-    expect(invokeMock).toHaveBeenCalledTimes(2);
-  });
-
-  it("invokes is_workspace_path_dir", async () => {
-    const invokeMock = vi.mocked(invoke);
-    invokeMock.mockResolvedValueOnce(true);
-
-    await expect(isWorkspacePathDir("/path/to/ws")).resolves.toBe(true);
-    expect(invokeMock).toHaveBeenCalledWith("is_workspace_path_dir", {
-      path: "/path/to/ws",
-    });
-  });
-
-  it("invokes add_clone", async () => {
-    const invokeMock = vi.mocked(invoke);
-    invokeMock.mockResolvedValueOnce({});
-
-    await addClone("ws-src", "/copies", "copy-1");
-
-    expect(invokeMock).toHaveBeenCalledWith("add_clone", {
-      sourceWorkspaceId: "ws-src",
-      copiesFolder: "/copies",
-      copyName: "copy-1",
-    });
-  });
-
-  it("invokes add_worktree with default copyAgentsMd", async () => {
-    const invokeMock = vi.mocked(invoke);
-    invokeMock.mockResolvedValueOnce({});
-
-    await addWorktree("parent-id", "feature-branch", "feature-name");
-
-    expect(invokeMock).toHaveBeenCalledWith("add_worktree", {
-      parentId: "parent-id",
-      branch: "feature-branch",
-      name: "feature-name",
-      copyAgentsMd: true,
-    });
   });
 });

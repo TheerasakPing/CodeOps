@@ -165,12 +165,20 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Signing secrets are optional, build will be un-signed if missing
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Apple certificates for macOS signing (optional)
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
-          tagName: v__VERSION__ # tauri-action will replace this with package.json version
+          tagName: v__VERSION__
           releaseName: "CodexOps v__VERSION__"
-          releaseBody: "Automated release from CI"
+          releaseBody: "Automated release from CI. Note: This build may be un-signed if signing keys were not provided."
           releaseDraft: true
           prerelease: false
           args: ${{ runner.os == 'Windows' && '--config src-tauri/tauri.windows.conf.json' || '' }}

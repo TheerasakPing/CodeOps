@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { AboutView } from "./AboutView";
 import { openUrl } from "@tauri-apps/plugin-opener";
@@ -26,6 +27,8 @@ describe("AboutView", () => {
     // It's a button, not a link
     const button = screen.getByRole("button", { name: /GitHub/i });
     fireEvent.click(button);
-    expect(openUrl).toHaveBeenCalledWith("https://github.com/TheerasakPing/CodeOps");
+    expect(openUrl).toHaveBeenCalledWith(
+      "https://github.com/TheerasakPing/CodeOps",
+    );
   });
 });

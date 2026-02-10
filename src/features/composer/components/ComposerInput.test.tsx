@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom";
 import { ComposerInput } from "./ComposerInput";
 import type { ComponentProps } from "react";
 
@@ -33,12 +34,24 @@ vi.mock("../hooks/useComposerImageDrop", () => ({
 }));
 
 // Mock lucide icons
-vi.mock("lucide-react/dist/esm/icons/image-plus", () => ({ default: () => <svg data-testid="icon-image-plus" /> }));
-vi.mock("lucide-react/dist/esm/icons/chevron-down", () => ({ default: () => <svg data-testid="icon-chevron-down" /> }));
-vi.mock("lucide-react/dist/esm/icons/chevron-up", () => ({ default: () => <svg data-testid="icon-chevron-up" /> }));
-vi.mock("lucide-react/dist/esm/icons/mic", () => ({ default: () => <svg data-testid="icon-mic" /> }));
-vi.mock("lucide-react/dist/esm/icons/square", () => ({ default: () => <svg data-testid="icon-square" /> }));
-vi.mock("lucide-react/dist/esm/icons/plus", () => ({ default: () => <svg data-testid="icon-plus" /> }));
+vi.mock("lucide-react/dist/esm/icons/image-plus", () => ({
+  default: () => <svg data-testid="icon-image-plus" />,
+}));
+vi.mock("lucide-react/dist/esm/icons/chevron-down", () => ({
+  default: () => <svg data-testid="icon-chevron-down" />,
+}));
+vi.mock("lucide-react/dist/esm/icons/chevron-up", () => ({
+  default: () => <svg data-testid="icon-chevron-up" />,
+}));
+vi.mock("lucide-react/dist/esm/icons/mic", () => ({
+  default: () => <svg data-testid="icon-mic" />,
+}));
+vi.mock("lucide-react/dist/esm/icons/square", () => ({
+  default: () => <svg data-testid="icon-square" />,
+}));
+vi.mock("lucide-react/dist/esm/icons/plus", () => ({
+  default: () => <svg data-testid="icon-plus" />,
+}));
 
 describe("ComposerInput", () => {
   const defaultProps: ComposerInputProps = {
@@ -75,13 +88,16 @@ describe("ComposerInput", () => {
     renderComponent({ onTextChange });
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "Hello world" } });
-    expect(onTextChange).toHaveBeenCalledWith("Hello world", expect.any(Number));
+    expect(onTextChange).toHaveBeenCalledWith(
+      "Hello world",
+      expect.any(Number),
+    );
   });
 
   it("calls onSend when send button is clicked", () => {
     const onSend = vi.fn();
     renderComponent({ onSend, canSend: true });
-    
+
     // Find the send button (it's the one with sendLabel when not loading/stopping)
     const sendButton = screen.getByLabelText("Send");
     fireEvent.click(sendButton);
@@ -91,7 +107,7 @@ describe("ComposerInput", () => {
   it("calls onStop when stop button is clicked", () => {
     const onStop = vi.fn();
     renderComponent({ onStop, canStop: true, isProcessing: true });
-    
+
     const stopButton = screen.getByLabelText("Stop");
     fireEvent.click(stopButton);
     expect(onStop).toHaveBeenCalled();
@@ -105,6 +121,8 @@ describe("ComposerInput", () => {
 
   it("shows placeholder text", () => {
     renderComponent();
-    expect(screen.getByPlaceholderText(/Ask Codex to do something/i)).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/Ask Codex to do something/i),
+    ).toBeInTheDocument();
   });
 });

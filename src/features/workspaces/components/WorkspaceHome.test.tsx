@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom";
 import { WorkspaceHome } from "./WorkspaceHome";
 import type { ComponentProps } from "react";
 
@@ -13,12 +14,14 @@ vi.mock("@tauri-apps/api/core", () => ({
 vi.mock("../../composer/components/ComposerInput", () => ({
   ComposerInput: ({ text, onTextChange, onSend }: any) => (
     <div data-testid="composer-input">
-      <input 
-        value={text} 
+      <input
+        value={text}
         onChange={(e) => onTextChange(e.target.value, e.target.selectionStart)}
         data-testid="mock-composer-textarea"
       />
-      <button onClick={onSend} data-testid="mock-composer-send">Send</button>
+      <button onClick={onSend} data-testid="mock-composer-send">
+        Send
+      </button>
     </div>
   ),
 }));
@@ -80,7 +83,14 @@ vi.mock("./WorkspaceHomeHistory", () => ({
 
 describe("WorkspaceHome", () => {
   const defaultProps: WorkspaceHomeProps = {
-    workspace: { id: "ws-1", name: "Test Workspace", path: "/path/to/ws", kind: "local" as any, connected: true, settings: {} as any },
+    workspace: {
+      id: "ws-1",
+      name: "Test Workspace",
+      path: "/path/to/ws",
+      kind: "local" as any,
+      connected: true,
+      settings: {} as any,
+    },
     runs: [],
     recentThreadInstances: [],
     recentThreadsUpdatedAt: null,
@@ -173,10 +183,10 @@ describe("WorkspaceHome", () => {
   it("handles prompt change", () => {
     const onPromptChange = vi.fn();
     renderComponent({ onPromptChange });
-    
+
     const input = screen.getByTestId("mock-composer-textarea");
     fireEvent.change(input, { target: { value: "New prompt" } });
-    
+
     // Check if onPromptChange was called (indirectly via usePromptHistory or similar hooks)
     // In our mock of ComposerInput, it calls onTextChange, which in WorkspaceHome calls handleTextChangeWithHistory
     // handleTextChangeWithHistory calls handleHistoryTextChange and handleTextChange
@@ -186,7 +196,7 @@ describe("WorkspaceHome", () => {
     // For simplicity in integration test, we trust the wiring if the component renders without error.
     // But better to check effect.
     // Since we mocked useComposerAutocompleteState, checking if that mock's handleTextChange is called is tricky without exposing it.
-    
+
     // Instead, let's just verify it's interactive.
     expect(input).toBeInTheDocument();
   });
@@ -194,10 +204,10 @@ describe("WorkspaceHome", () => {
   it("calls onStartRun when send is clicked", async () => {
     const onStartRun = vi.fn().mockResolvedValue(true);
     renderComponent({ onStartRun, prompt: "Do something" });
-    
+
     const sendButton = screen.getByTestId("mock-composer-send");
     fireEvent.click(sendButton);
-    
+
     await waitFor(() => {
       expect(onStartRun).toHaveBeenCalled();
     });
@@ -210,6 +220,8 @@ describe("WorkspaceHome", () => {
 
   it("displays warning for truncated AGENTS.md", () => {
     renderComponent({ agentMdTruncated: true });
-    expect(screen.getByText(/Showing the first part of a large file/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Showing the first part of a large file/i),
+    ).toBeInTheDocument();
   });
 });

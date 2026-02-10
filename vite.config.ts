@@ -19,11 +19,17 @@ export default defineConfig(async () => ({
   },
   define: {
     __APP_VERSION__: JSON.stringify(packageJson.version),
+    GITHUB_URL: JSON.stringify("https://github.com/TheerasakPing/CodeOps"),
   },
   test: {
-    environment: "node",
+    environment: "jsdom",
+    globals: true,
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     setupFiles: ["src/test/vitest.setup.ts"],
+    coverage: {
+      reporter: ["text", "json", "html"],
+      provider: "v8",
+    },
   },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

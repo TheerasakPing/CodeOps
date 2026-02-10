@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: ["main", "master"]
+    tags:
+      - "v*"
   pull_request:
     branches: ["main", "master"]
 
@@ -97,8 +99,10 @@ jobs:
         run: cargo test
         working-directory: src-tauri
 
-  build-tauri:
-    name: Tauri build (${{ matrix.platform.name }})
+  release-build:
+    permissions:
+      contents: write
+    name: Release build (${{ matrix.platform.name }})
     runs-on: ${{ matrix.platform.os }}
     needs:
       - lint
@@ -111,13 +115,10 @@ jobs:
         platform:
           - name: macOS
             os: macos-latest
-            build_command: npm run tauri -- build --debug --no-bundle
           - name: Linux
             os: ubuntu-latest
-            build_command: npm run tauri -- build --debug --no-bundle
           - name: Windows
             os: windows-latest
-            build_command: npm run tauri -- build --debug --no-bundle --config src-tauri/tauri.windows.conf.json
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -132,9 +133,9 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             src-tauri/target
-          key: ${{ runner.os }}-cargo-build-${{ hashFiles('src-tauri/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('src-tauri/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-build-
+            ${{ runner.os }}-cargo-release-
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: command -v cmake >/dev/null 2>&1 || brew install cmake
@@ -160,8 +161,16 @@ jobs:
           echo "C:\\Program Files\\LLVM\\bin" >> $env:GITHUB_PATH
       - name: Install dependencies
         run: npm ci
-      - name: Doctor (Windows)
-        if: runner.os == 'Windows'
-        run: npm run doctor:win
-      - name: Tauri debug build
-        run: ${{ matrix.platform.build_command }}
+      - name: Build and Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: v__VERSION__ # tauri-action will replace this with package.json version
+          releaseName: "CodexOps v__VERSION__"
+          releaseBody: "Automated release from CI"
+          releaseDraft: true
+          prerelease: false
+          args: ${{ runner.os == 'Windows' && '--config src-tauri/tauri.windows.conf.json' || '' }}

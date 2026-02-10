@@ -35,6 +35,11 @@ CodexOps is a Tauri app for orchestrating multiple Codex agents across local wor
 - File tree with search, file-type icons, and Reveal in Finder/Explorer.
 - Prompt library for global/workspace prompts: create/edit/delete/move and run in current or new threads.
 
+### Claude Code CLI Integration
+
+- Manage and invoke the Claude Agent directly within the application.
+- Seamlessly interact with Claude Code CLI for advanced agentic workflows.
+
 ### UI & Experience
 
 - Resizable sidebar/right/plan/terminal/debug panels with persisted sizes.
@@ -265,3 +270,12 @@ Frontend calls live in `src/services/tauri.ts` and map to commands in `src-tauri
 - Prompts: `prompts_list`, `prompts_create`, `prompts_update`, `prompts_delete`, `prompts_move`, `prompts_workspace_dir`, `prompts_global_dir`.
 - Terminal/dictation/notifications/usage: `terminal_open`, `terminal_write`, `terminal_resize`, `terminal_close`, `dictation_model_status`, `dictation_download_model`, `dictation_cancel_download`, `dictation_remove_model`, `dictation_request_permission`, `dictation_start`, `dictation_stop`, `dictation_cancel`, `send_notification_fallback`, `is_macos_debug_build`, `local_usage_snapshot`.
 - Remote backend helpers: `orbit_connect_test`, `orbit_sign_in_start`, `orbit_sign_in_poll`, `orbit_sign_out`, `orbit_runner_start`, `orbit_runner_stop`, `orbit_runner_status`, `tailscale_status`, `tailscale_daemon_command_preview`, `tailscale_daemon_start`, `tailscale_daemon_stop`, `tailscale_daemon_status`.
+
+## Changelog
+
+### v1.0.0
+
+- **Rebranding**: Renamed from CodexMonitor to CodexOps.
+- **Feature**: Added Claude Code CLI support for direct agent integration.
+- **CI/CD**: Fixed and improved GitHub Actions workflows for reliable releases.
+- **Structure**: Project structure flattened to root directory.

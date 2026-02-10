@@ -41,7 +41,7 @@ export async function mockTauri(page: Page) {
             return undefined;
         }
       },
-      listen: async (name: string, cb: (event: any) => void) => {
+      listen: async (name: string, _cb: (event: any) => void) => {
         console.log("[Tauri Mock] listen:", name);
         // Return an unlisten function
         return () => {

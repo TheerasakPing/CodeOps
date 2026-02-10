@@ -34,7 +34,7 @@ futures-util = "0.3"
 tokio-tungstenite = { version = "0.24", features = ["rustls-tls-webpki-roots"] }
 uuid = { version = "1", features = ["v4"] }
 tauri-plugin-dialog = "2"
-git2 = { version = "0.20.3", features = ["vendored-openssl", "vendored-libgit2"] }
+git2 = { version = "0.20.4", features = ["vendored-openssl", "vendored-libgit2"] }
 base64 = "0.22"
 fix-path-env = { git = "https://github.com/tauri-apps/fix-path-env-rs" }
 ignore = "0.4.25"
